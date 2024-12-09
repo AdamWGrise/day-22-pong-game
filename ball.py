@@ -10,8 +10,9 @@ class Ball(Turtle):
         self.goto(position)
         self.color("white")
         self.penup()
-        self.v_distance = 10
-        self.h_distance = 10
+        self.base_distance = 3
+        self.v_distance = self.base_distance
+        self.h_distance = self.base_distance
 
     def move_up(self, distance):
         return self.ycor() + distance
@@ -29,12 +30,30 @@ class Ball(Turtle):
 
     def paddle_bounce(self):
         self.h_distance *= -1
-        # if self.h_distance < 0:
-        #     self.h_distance -= 0.05 * random.randint(3, 10)
-        # else:
-        #     self.h_distance += 0.05 * random.randint(3, 10)
+        prev_h_speed = self.h_distance
+        self.h_distance = self.h_distance + self.h_distance * random.uniform(-0.2, 0.2)
+        h_speed_change = self.h_distance - prev_h_speed
+        if self.v_distance > 0:
+            self.v_distance = self.v_distance + h_speed_change
+        else:
+            self.v_distance = self.v_distance - h_speed_change
+        if self.h_distance < 0:
+            self.h_distance -= 0.05 * random.randint(3, 10)
+        else:
+            self.h_distance += 0.05 * random.randint(3, 10)
+
+    def reset_speed(self):
+        if self.h_distance > 0:
+            self.h_distance = self.base_distance
+        else:
+            self.h_distance = self.base_distance * -1
+        if self.v_distance > 0:
+            self.v_distance = self.base_distance
+        else:
+            self.v_distance = self.base_distance * -1
 
     def point_score(self, side):
         print("Point for " + side + " player")
         self.goto(0, 0)
+        self.reset_speed()
         self.h_distance *= -1
